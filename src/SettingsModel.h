@@ -255,20 +255,26 @@ public:
      */
     bool executeCommand(std::string name);
 
-    void addProperty(std::string name, std::any value, std::string units = "",
+
+    std::map<std::string, std::shared_ptr<BaseProperty>>& getProperties(){return m_props;};
+    std::map<std::string, std::shared_ptr<BaseCommand>>& getCommands(){return m_commands;};
+
+protected:
+
+    void addProperty(std::string name, std::any value, std::string units = "", std::string access = "write|read",
                   bool (*f)(BaseProperty*, std::any) = +[](BaseProperty* p, std::any v)
     {
         // check value type
         if (std::type_index(p->getValueType()) != std::type_index(v.type()))
             return false;
         return true;
-    }, std::string access = "write|read") {
+    }) {
         std::shared_ptr<BaseProperty> _param(new BaseProperty(name, value, access, units, f));
         m_props.insert({name, _param});
     };
 
     template<typename T>
-    void addProperty(std::string name, T value, T min, T max, std::string units = "",
+    void addProperty(std::string name, T value, T min, T max, std::string units = "", std::string access = "write|read",
                   bool (*f)(BaseProperty*, std::any) = +[](BaseProperty* p, std::any v)
     {
         // check value type
@@ -281,13 +287,13 @@ public:
             return false;
 
         return true;
-    }, std::string access = "write|read") {
+    }) {
         std::shared_ptr<BaseProperty> _param(new BaseProperty(name, value, access, units, min, max, f));
         m_props.insert({name, _param});
     };
 
     template<typename T>
-    void addProperty(std::string name, T value, T min, T max, T step, std::string units = "",
+    void addProperty(std::string name, T value, T min, T max, T step, std::string units = "", std::string access = "write|read",
                   bool (*f)(BaseProperty*, std::any) = +[](BaseProperty* p, std::any v)
     {
         // check value type
@@ -304,13 +310,13 @@ public:
             return false;
 
         return true;
-    }, std::string access = "write|read") {
+    }) {
         std::shared_ptr<BaseProperty> _param(new BaseProperty(name, value, access, units, min, max, step, f));
         m_props.insert({name, _param});
     };
 
     template<typename T>
-    void addProperty(std::string name, T value, std::shared_ptr<ValueEnum> valueEnum, std::string units = "",
+    void addProperty(std::string name, T value, std::shared_ptr<ValueEnum> valueEnum, std::string units = "", std::string access = "write|read",
                 bool (*f)(BaseProperty*, std::any) = +[](BaseProperty* p, std::any v)
     {
         // check value type
@@ -329,7 +335,7 @@ public:
         }
 
         return true;
-    }, std::string access = "write|read"){
+    }){
         std::shared_ptr<BaseProperty> _param(new BaseProperty(name, value, access, units, valueEnum, f));
         m_props.insert({name, _param});
     };
